@@ -18,9 +18,11 @@ public class Order {
     private ZonedDateTime date;
     private List<Item> itens;
     private Double discount;
+    private Double totalPrice;
 
     public Order() {
         this.date = ZonedDateTime.now();
+        this.discount = 0d;
     }
 
     public Order(User buyer, User seller, List itens) {
@@ -28,6 +30,13 @@ public class Order {
         this.buyer = buyer;
         this.seller = seller;
         this.itens = itens;
+    }
+
+    public Order(User buyer, User seller, ZonedDateTime date) {
+        this();
+        this.buyer = buyer;
+        this.seller = seller;
+        this.date = date;
     }
 
     public String getId() {
@@ -78,15 +87,11 @@ public class Order {
         this.discount = discount;
     }
 
-    public double calculateDiscount(double discount, double totalPrice) {
-        return totalPrice - ((discount / 100) * totalPrice);
+    public Double getTotalPrice() {
+        return totalPrice;
     }
 
-    public Double getTotalPrice() {
-        double totalItensPrice = getItens().stream().mapToDouble(i -> (i.getPrice() * i.getQuantity())).sum();
-        double totalPrice = calculateDiscount(getDiscount(), totalItensPrice);
-        BigDecimal totalPriceBd = new BigDecimal(totalPrice).setScale(2, RoundingMode.HALF_UP);
-
-        return totalPriceBd.doubleValue();
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

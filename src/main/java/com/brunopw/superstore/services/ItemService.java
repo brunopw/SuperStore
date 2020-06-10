@@ -2,6 +2,7 @@ package com.brunopw.superstore.services;
 
 import com.brunopw.superstore.Item;
 import com.brunopw.superstore.repositories.ItemRepository;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,15 @@ public class ItemService {
     }
 
     public Item save(Item newItem) {
+        return itemRepository.save(newItem);
+    }
+
+    public Item saveOrUpdate(Item newItem) {
+        Example itemExample = Example.of(new Item(newItem.getName()));
+        List<Item> itens = itemRepository.findAll(itemExample);
+        if(!itens.isEmpty()){
+            newItem.setId(itens.get(0).getId());
+        }
         return itemRepository.save(newItem);
     }
 

@@ -21,6 +21,10 @@ public class Item {
         this.quantity = quantity;
     }
 
+    public Item(String name) {
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

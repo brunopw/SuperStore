@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class SuperStoreApplication {
 		buyer.setBirthday(LocalDate.of(1992, 01, 28));
 		buyer.setEmail("bruno@gmail.com");
 
-		userService.save(buyer);
+		userService.saveOrUpdate(buyer);
 
 		User buyer2 = new User();
 		buyer2.setName("Ramon");
@@ -36,7 +38,7 @@ public class SuperStoreApplication {
 		buyer2.setBirthday(LocalDate.of(1900, 05, 14));
 		buyer2.setEmail("ramon@gmail.com");
 
-		userService.save(buyer2);
+		userService.saveOrUpdate(buyer2);
 
 		User buyer3 = new User();
 		buyer3.setName("Taina");
@@ -45,7 +47,7 @@ public class SuperStoreApplication {
 		buyer3.setBirthday(LocalDate.of(1970, 01, 31));
 		buyer3.setEmail("taina@gmail.com");
 
-		userService.save(buyer3);
+		userService.saveOrUpdate(buyer3);
 
 		User buyer4 = new User();
 		buyer4.setName("Jean");
@@ -54,7 +56,7 @@ public class SuperStoreApplication {
 		buyer4.setBirthday(LocalDate.of(1993, 01, 31));
 		buyer4.setEmail("jean@gmail.com");
 
-		userService.save(buyer4);
+		userService.saveOrUpdate(buyer4);
 
 		User seller = new User();
 		seller.setName("Daniel");
@@ -62,46 +64,50 @@ public class SuperStoreApplication {
 		seller.setType(UserType.ADM);
 		seller.setEmail("daniel@gmail.com");
 
-		userService.save(seller);
+		userService.saveOrUpdate(seller);
 
 		List itens = new ArrayList<Item>();
 
 		Item guinness = new Item("Guinness", 1.99, 12);
-		itemService.save(guinness);
+		itemService.saveOrUpdate(guinness);
 		itens.add(guinness);
 		Item coke = new Item("Coke", 0.99, 6);
-		itemService.save(coke);
+		itemService.saveOrUpdate(coke);
 		itens.add(coke);
 		Item rice = new Item("Basmati Rice", 0.89, 2);
-		itemService.save(rice);
+		itemService.saveOrUpdate(rice);
 		itens.add(rice);
 
 		Order order = new Order(buyer,seller, itens);
-		orderService.save(order);
+		order.setDate(ZonedDateTime.of(2020,1,28,9,30,42,100, ZoneOffset.UTC));
+		orderService.saveOrUpdate(order);
 
 		itens = new ArrayList<Item>();
-		Item hopHouse = new Item("Hop House", 1.75, 6);
-		itemService.save(hopHouse);
+		Item hopHouse = new Item("Hop House", 1.73, 6);
+		itemService.saveOrUpdate(hopHouse);
 		itens.add(hopHouse);
 
 		Order order2 = new Order(buyer2,seller, itens);
-		orderService.save(order2);
+		order2.setDate(ZonedDateTime.of(2020,2,14,9,30,28,100, ZoneOffset.UTC));
+		orderService.saveOrUpdate(order2);
 
 		itens = new ArrayList<Item>();
 		Item bluePaper = new Item("Blue Paper", 10.0, 1);
-		itemService.save(bluePaper);
+		itemService.saveOrUpdate(bluePaper);
 		itens.add(bluePaper);
 
 		Order order3 = new Order(buyer3,seller, itens);
-		orderService.save(order3);
+		order3.setDate(ZonedDateTime.of(2020,3,20,8,8,2,100, ZoneOffset.UTC));
+		orderService.saveOrUpdate(order3);
 
 		itens = new ArrayList<Item>();
 		Item milk = new Item("Milk", 0.75, 2);
-		itemService.save(milk);
+		itemService.saveOrUpdate(milk);
 		itens.add(milk);
 
 		Order order4 = new Order(buyer4,seller, itens);
-		orderService.save(order4);
+		order4.setDate(ZonedDateTime.of(2020,4,15,11,30,10,100, ZoneOffset.UTC));
+		orderService.saveOrUpdate(order4);
 
 		return null;
 	}

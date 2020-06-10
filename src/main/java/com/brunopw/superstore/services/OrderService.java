@@ -2,8 +2,11 @@ package com.brunopw.superstore.services;
 
 import com.brunopw.superstore.Order;
 import com.brunopw.superstore.repositories.OrderRepository;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +25,14 @@ public class OrderService {
     }
 
     public Order save(Order newOrder) {
-        newOrder.setDiscount(calculateDiscount(newOrder));
+        calculateTotalPrice(newOrder);
+        return orderRepository.save(newOrder);
+    }
+
+    public Order saveOrUpdate(Order newOrder) {
+        calculateTotalPrice(newOrder);
+        Example orderExample = Example.of(new Order(newOrder.getBuyer(), newOrder.getSeller(), newOrder.getDate()));
+        List<Order> orders = orderRepository.findAll(orderExample);
         return orderRepository.save(newOrder);
     }
 
@@ -49,5 +59,23 @@ public class OrderService {
             return 7.0;
         }
         return 0.0;
+    }
+
+
+    public double calculatePercentage(double discount, double totalPrice) {
+        return totalPrice - ((discount / 100) * totalPrice);
+    }
+
+    public void calculateTotalPrice(Order order) {
+        order.setDiscount(calculateDiscount(order));
+        if(!order.getItens().isEmpty()) {
+            double totalItensPrice = order.getItens().stream().mapToDouble(i -> (i.getPrice() * i.getQuantity())).sum();
+            double totalPrice = calculatePercentage(order.getDiscount(), totalItensPrice);
+            BigDecimal totalPriceBd = new BigDecimal(totalPrice).setScale(2, RoundingMode.HALF_UP);
+
+            order.setTotalPrice(totalPriceBd.doubleValue());
+        } else {
+            order.setTotalPrice(0d);
+        }
     }
 }

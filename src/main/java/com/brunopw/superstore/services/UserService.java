@@ -2,6 +2,7 @@ package com.brunopw.superstore.services;
 
 import com.brunopw.superstore.User;
 import com.brunopw.superstore.repositories.UserRepository;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,21 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User save(User newUser) {
+    public User save(User newUser) { ;
         return userRepository.save(newUser);
+    }
+
+    public User saveOrUpdate(User newUser) { ;
+        Example userExample = Example.of(new User(newUser.getEmail()));
+        List<User> users = userRepository.findAll(userExample);
+        if(!users.isEmpty()){
+            newUser.setId(users.get(0).getId());
+        }
+        return userRepository.save(newUser);
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userRepository.exists(Example.of(new User(email)));
     }
 
     public Optional<User> findById(String id) {

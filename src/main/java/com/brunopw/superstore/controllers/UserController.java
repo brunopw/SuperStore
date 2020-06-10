@@ -24,7 +24,10 @@ public class UserController {
 
     @PostMapping
     private User newUser(@RequestBody User newUser) {
-        return userService.save(newUser);
+        if(!userService.existsByEmail(newUser.getEmail())) {
+            return userService.save(newUser);
+        }
+        return null;
     }
 
     @GetMapping("/{id}")
