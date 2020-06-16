@@ -1,6 +1,7 @@
 package com.brunopw.superstore.services;
 
 import com.brunopw.superstore.User;
+import com.brunopw.superstore.UserType;
 import com.brunopw.superstore.repositories.UserRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,21 @@ public class UserService {
 
     public void deleteById(String id) {
         userRepository.deleteById(id);
+    }
+
+    public List<User> findByType(UserType type) {
+        return userRepository.findByType(type);
+    }
+
+    public List<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public List<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public List<User> findByNameContaining(String name) {
+        return userRepository.findByNameContaining(name);
     }
 }

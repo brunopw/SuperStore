@@ -42,4 +42,16 @@ public class ItemService {
         itemRepository.deleteById(id);
     }
 
+    public List<Item> findByNameContaining(String name) {
+        return itemRepository.findByNameContaining(name);
+    }
+
+    public List<Item> findByName(String name) {
+        return itemRepository.findByName(name);
+    }
+
+    public boolean existsByName(String name) {
+        if(itemRepository.findByName(name).isEmpty()) return false;
+        return true;
+    }
 }

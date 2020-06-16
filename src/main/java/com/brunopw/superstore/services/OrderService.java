@@ -1,6 +1,8 @@
 package com.brunopw.superstore.services;
 
 import com.brunopw.superstore.Order;
+import com.brunopw.superstore.User;
+import com.brunopw.superstore.calcs.DiscountRuleResolver;
 import com.brunopw.superstore.repositories.OrderRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,32 +47,10 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
-    private Double calculateDiscount(Order order) {
-        /*Discount system:
-            Clients over 70 years old, 15% discount
-            Clients over 50 years old, 10% discount
-            Clients living in Dublin, 7% discount
-            The discounts are not cumulative!*/
-
-        if(order.getBuyer().getBirthday().isBefore(LocalDate.now().minusYears(70))) {
-            return 15.0;
-        } else if(order.getBuyer().getBirthday().isBefore(LocalDate.now().minusYears(50))) {
-            return 10.0;
-        } else if(order.getBuyer().getAddress().equalsIgnoreCase("Dublin")) {
-            return 7.0;
-        }
-        return 0.0;
-    }
-
-
-    public double calculatePercentage(double discount, double totalPrice) {
-        return totalPrice - ((discount / 100) * totalPrice);
-    }
-
     public void calculateTotalPrice(Order order) {
-        order.setDiscount(calculateDiscount(order));
+        order.setDiscount(DiscountRuleResolver.getInstance().calculateDicount(order));
         if(!order.getItens().isEmpty()) {
-            double totalItensPrice = order.getItens().stream().mapToDouble(i -> (i.getPrice() * i.getQuantity())).sum();
+            double totalItensPrice = getTotalItensPrice(order);
             double totalPrice = calculatePercentage(order.getDiscount(), totalItensPrice);
             BigDecimal totalPriceBd = new BigDecimal(totalPrice).setScale(2, RoundingMode.HALF_UP);
 
@@ -78,4 +59,17 @@ public class OrderService {
             order.setTotalPrice(0d);
         }
     }
+
+    private double calculatePercentage(double discount, double totalPrice) {
+        return totalPrice - ((discount / 100) * totalPrice);
+    }
+
+    private double getTotalItensPrice(Order order) {
+        return order.getItens().stream().mapToDouble(i -> (i.getPrice() * i.getQuantity())).sum();
+    }
+
+    public List<Order> findByBuyerNameContaining(String buyerName) {
+        return orderRepository.findByBuyerNameContaining(buyerName);
+    }
+
 }

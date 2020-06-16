@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -19,7 +20,10 @@ public class OrderController {
     }
 
     @GetMapping
-    private List<Order> findAll() {
+    private List<Order> findAll(@RequestParam(required = false) String buyername) {
+        if(buyername != null) {
+            return orderService.findByBuyerNameContaining(buyername);
+        }
         return orderService.findAll();
     }
 

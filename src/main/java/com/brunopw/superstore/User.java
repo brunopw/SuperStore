@@ -3,7 +3,10 @@ package com.brunopw.superstore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Document
@@ -11,20 +14,27 @@ public class User {
 
     @Id
     private String id;
+    @NotNull
     private String username;
+    @NotNull
     private String password;
     private UserType type;
+    @NotNull
     private String name;
-
     @Indexed(unique = true)
+    @Email
     private String email;
-
     private String address;
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @NotNull
     private LocalDate birthday;
 
-    public User() {}
+    public User() {
+        this.setType(UserType.CLIENT);
+    }
 
     public User(String username, String password, UserType type) {
+        this();
         this.username = username;
         this.password = password;
         this.type = type;
@@ -32,6 +42,10 @@ public class User {
 
     public User(String email) {
         this.email = email;
+    }
+
+    public User(UserType type) {
+        this.type = type;
     }
 
     public String getId() {

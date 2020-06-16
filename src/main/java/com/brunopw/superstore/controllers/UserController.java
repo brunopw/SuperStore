@@ -2,12 +2,15 @@ package com.brunopw.superstore.controllers;
 
 import com.brunopw.superstore.User;
 import com.brunopw.superstore.UserNotFoundException;
+import com.brunopw.superstore.UserType;
 import com.brunopw.superstore.services.UserService;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/users")
 public class UserController {
 
@@ -18,12 +21,27 @@ public class UserController {
     }
 
     @GetMapping
-    private List<User> findAll() {
+    private List<User> findAll(@RequestParam(required = false) UserType type,
+                               @RequestParam(required = false) String username,
+                               @RequestParam(required = false) String name,
+                               @RequestParam(required = false) String email) {
+        if(type != null) {
+            return userService.findByType(type);
+        }
+        if(username != null) {
+            return userService.findByUsername(username);
+        }
+        if(name != null) {
+            return userService.findByNameContaining(name);
+        }
+        if(email != null) {
+            return userService.findByEmail(email);
+        }
         return userService.findAll();
     }
 
     @PostMapping
-    private User newUser(@RequestBody User newUser) {
+    private User newUser(@Valid @RequestBody User newUser) {
         if(!userService.existsByEmail(newUser.getEmail())) {
             return userService.save(newUser);
         }
